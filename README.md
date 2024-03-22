@@ -1,6 +1,6 @@
 # README - Teste de Qualidade de Software
 (Os vídeos demonstrativos da execução de cada projeto estão disponíveis como "Back.mkv" e "Front.mkv".)
-Este repositório contém os arquivos e instruções necessários para realizar o teste de qualidade de software nos projetos Backend e Frontend.
+
 
 # Teste Backend (Postman)
 
@@ -97,8 +97,6 @@ Além disso, são realizados testes adicionais para validar que:
 - O campo "message" não esteja vazio e seja uma string.
 
 # Teste de Frontend - Cypress
-
-Este repositório contém os arquivos e instruções necessários para realizar o teste de frontend utilizando Cypress.
 
 ## Pré-requisitos
 
