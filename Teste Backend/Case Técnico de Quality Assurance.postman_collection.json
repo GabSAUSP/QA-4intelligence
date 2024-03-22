@@ -1,0 +1,484 @@
+{
+	"info": {
+		"_postman_id": "31165869-1145-476e-8d06-9a24d0fcc0cd",
+		"name": "Case Técnico de Quality Assurance",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33788615"
+	},
+	"item": [
+		{
+			"name": "Teste Backend",
+			"item": [
+				{
+					"name": "CRUD API Usuários",
+					"item": [
+						{
+							"name": "C - Create User",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonResponse = JSON.parse(responseBody);",
+											"postman.setEnvironmentVariable(\"user_id\", jsonResponse._id)",
+											"",
+											"",
+											"if (responseCode.code === 201) {",
+											"    pm.environment.set(\"user_id\", jsonResponse._id);",
+											"",
+											"    pm.test(\"Status code is 201 Created\", function() {",
+											"        pm.response.to.have.status(201);",
+											"    });",
+											"",
+											"    pm.test(\"Validação da mensagem de sucesso \\\"Cadastro realizado com sucesso\\\"\", function() {",
+											"        pm.expect(jsonResponse.message).to.equal(\"Cadastro realizado com sucesso\");",
+											"    });",
+											"} else if (responseCode.code === 400) {",
+											"    // Validação do status code 400",
+											"    pm.test(\"Falha no teste devido ao código de resposta 400\", function() {",
+											"         pm.response.to.have.status(400);",
+											"    });",
+											"",
+											"    pm.test(\"Validação da mensagem de erro \\\"Este email já está sendo usado\\\"\", function() {",
+											"        pm.expect(jsonResponse.message).to.equal(\"Este email já está sendo usado\");",
+											"    });",
+											"} else if(responseCode.code === 405){",
+											"    // Validação do status code 405",
+											"    pm.test(\"Status code is 405 Bad Request\", function() {",
+											"        pm.response.to.have.status(405);",
+											"    });",
+											"    ",
+											"    pm.test(\"Validação da mensagem de erro \\\"Não é possível realizar POST em /usuarios/null. Acesse https://serverest.dev para ver as rotas disponíveis e como utilizá-las.\\\" \", function() {",
+											"        pm.expect(jsonResponse.message).to.equal(\"Não é possível realizar POST em /usuarios/null. Acesse https://serverest.dev para ver as rotas disponíveis e como utilizá-las.\");",
+											"    });",
+											"}",
+											"",
+											"pm.test(\"Message é uma string não vazia\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"O valor não deve estar vazio\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Content-Type deve ser application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"nome\": \"EU QA Teste\",\r\n  \"email\": \"qa4i@qa.com.br\",\r\n  \"password\": \"teste\",\r\n  \"administrador\": \"true\"\r\n}"
+								},
+								"url": {
+									"raw": "https://serverest.dev/usuarios/",
+									"protocol": "https",
+									"host": [
+										"serverest",
+										"dev"
+									],
+									"path": [
+										"usuarios",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "R -Read User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonResponse = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"user_id\", jsonResponse._id)\r",
+											"// Armazenar o ID do usuário apenas se a solicitação for bem-sucedida (status 200)\r",
+											"if (responseCode.code === 200) {\r",
+											"    pm.environment.set(\"user_id\", jsonResponse._id);\r",
+											"    \r",
+											"    // Teste para verificar se o status code é 200 Created (sucesso)\r",
+											"    pm.test(\"Status code is 200 OK\", function() {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"\r",
+											"    // Não há mensagem para ser validada quando o usuário é encontrado\r",
+											"    \r",
+											"}\r",
+											"else {\r",
+											"    // Validação do status code 400\r",
+											"    pm.test(\"Falha no teste devido ao código de resposta 400\", function() {\r",
+											"         pm.response.to.have.status(400);\r",
+											"    });\r",
+											"\r",
+											"    // Teste para verificar se a mensagem de erro é retornada corretamente\r",
+											"    pm.test(\"Validação da mensagem de erro \\\"Usuário não encontrado\\\"\", function() {\r",
+											"        pm.expect(jsonResponse.message).to.equal(\"Usuário não encontrado\");\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://serverest.dev/usuarios/{{user_id}}",
+									"protocol": "https",
+									"host": [
+										"serverest",
+										"dev"
+									],
+									"path": [
+										"usuarios",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "U - Update User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Verifica se o status da resposta é 200",
+											"if (responseCode.code === 200) {",
+											"",
+											"",
+											"        pm.test(\"Status code is 201 OK\", function() {",
+											"        pm.response.to.have.status(200);",
+											"    });",
+											"",
+											"    // Validação da mensagem de sucesso \"Registro alterado com sucesso\"",
+											"    pm.test(\"Validação da mensagem de sucesso \\\"Registro alterado com sucesso\\\"\", function () {",
+											"        pm.expect(pm.response.json().message).to.equal(\"Registro alterado com sucesso\");",
+											"    });",
+											"",
+											"}",
+											"// Verifica se o status da resposta é 400",
+											"else if (responseCode.code === 400) {",
+											"",
+											"    // Validação do status code 400",
+											"    pm.test(\"Falha no teste devido ao código de resposta 400\", function() {",
+											"         pm.response.to.have.status(400);",
+											"    });",
+											"",
+											"    // Validação da mensagem de erro \"Usuário não encontrado\"",
+											"    pm.test(\"Validação da mensagem de erro \\\"Usuário não encontrado\\\"\", function () {",
+											"        pm.response.to.have.status(400);",
+											"    });",
+											"}",
+											"",
+											"// Verifica se o status da resposta é 400",
+											"else if (responseCode.code === 405) {",
+											"",
+											"    // Validação do status code 400",
+											"    pm.test(\"Falha no teste devido ao código de resposta 400\", function() {",
+											"         pm.response.to.have.status(405);",
+											"    });",
+											"",
+											"    // Validação da mensagem de erro \"Usuário não encontrado\"",
+											"    pm.test(\"Validação da mensagem de erro \\\"Não é possível realizar PUT em /usuarios/. Acesse https://serverest.dev para ver as rotas disponíveis e como utilizá-las.\\\"\", function () {",
+											"        pm.response.to.have.status(405);",
+											"    });",
+											"}",
+											"",
+											"",
+											"pm.test(\"A resposta possui os campos obrigatórios\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string');",
+											"});",
+											"",
+											"",
+											"pm.test(\"A mensagem é uma string não vazia\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"O valor não deve estar vazio\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"O cabeçalho Content-Type está definido como application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"O tempo de resposta é inferior a 500ms\", function () {",
+											"    pm.expect(pm.response.responseTime).to.be.below(500);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"nome\": \"EU QA Teste 1\",\r\n  \"email\": \"qa4i@qa.com.br\",\r\n  \"password\": \"teste\",\r\n  \"administrador\": \"true\"\r\n}"
+								},
+								"url": {
+									"raw": "https://serverest.dev/usuarios/{{user_id}}",
+									"protocol": "https",
+									"host": [
+										"serverest",
+										"dev"
+									],
+									"path": [
+										"usuarios",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "D - Delete User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonResponse = JSON.parse(responseBody);\r",
+											"postman.setEnvironmentVariable(\"user_id\", jsonResponse._id)\r",
+											"\r",
+											"\r",
+											"if (responseCode.code === 200) {\r",
+											"    pm.environment.set(\"user_id\", jsonResponse._id);\r",
+											"    \r",
+											"    // Teste para verificar se o status code é 200 OK (sucesso)\r",
+											"    pm.test(\"Status code is 200 OK\", function() {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"\r",
+											"    // Verifica se a mensagem é \"Registro excluído com sucesso\"\r",
+											"    if (jsonResponse.message === \"Registro excluído com sucesso\") {\r",
+											"        pm.test(\"Validação da mensagem de sucesso \\\"Registro excluído com sucesso\\\"\", function() {\r",
+											"            pm.expect(jsonResponse.message).to.eql(\"Registro excluído com sucesso\");\r",
+											"        });\r",
+											"    }\r",
+											"    // Verifica se a mensagem é \"Nenhum registro excluído\"\r",
+											"    else if (jsonResponse.message === \"Nenhum registro excluído\") {\r",
+											"        pm.test(\"Validação da mensagem de erro \\\"Nenhum registro excluído\\\"\", function() {\r",
+											"            pm.expect(jsonResponse.message).to.eql(\"Nenhum registro excluído\");\r",
+											"        });\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"\r",
+											"else if (responseCode.code === 400) {\r",
+											"    // Validação do status code 400\r",
+											"    pm.test(\"Status code is 400 Bad Request\", function() {\r",
+											"        pm.response.to.have.status(400);\r",
+											"    });\r",
+											"\r",
+											"    // Teste para verificar se a mensagem de erro é retornada corretamente\r",
+											"    pm.test(\"Validação da mensagem de erro \\\"Não é permitido excluir usuário com carrinho cadastrado\\\" \", function() {\r",
+											"        pm.expect(jsonResponse.message).to.equal(\"Não é permitido excluir usuário com carrinho cadastrado\");\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"else if (responseCode.code === 405) {\r",
+											"\r",
+											"    // Validação do status code 405\r",
+											"    pm.test(\"Status code is 405 Bad Request\", function() {\r",
+											"        pm.response.to.have.status(405);\r",
+											"    });\r",
+											"\r",
+											"    // Teste para verificar se a mensagem de erro é retornada corretamente\r",
+											"    pm.test(\"Validação da mensagem de erro \\\"Não é possível realizar DELETE em /usuarios/. Acesse https://serverest.dev para ver as rotas disponíveis e como utilizá-las.\\\"\", function() {\r",
+											"        pm.expect(jsonResponse.message).to.equal(\"Não é possível realizar DELETE em /usuarios/. Acesse https://serverest.dev para ver as rotas disponíveis e como utilizá-las.\");\r",
+											"    });\r",
+											"\r",
+											"}\r",
+											"pm.test('A resposta possui os campos obrigatórios', function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData).to.be.an('object');\r",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string');\r",
+											"})\r",
+											"\r",
+											"pm.test('Verificar se o campo \\'message\\' não está vazio', function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.message).to.exist.and.to.have.lengthOf.at.least(1, 'O valor não deve estar vazio');\r",
+											"})\r",
+											"\r",
+											"pm.test('Verificar se o campo \\'message\\' é uma string', function () {\r",
+											"    const responseData = pm.response.json();\r",
+											"    pm.expect(responseData.message).to.be.a('string');\r",
+											"})\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://serverest.dev/usuarios/{{user_id}}",
+									"protocol": "https",
+									"host": [
+										"serverest",
+										"dev"
+									],
+									"path": [
+										"usuarios",
+										"{{user_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Buscar Usuários",
+					"item": [
+						{
+							"name": "Buscar por Lista",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Fixed typo in environment\r",
+											"var jsonResponse = JSON.parse(responseBody);\r",
+											"pm.environment.set(\"user_id\", jsonResponse._id);\r",
+											"\r",
+											"pm.test(\"Status code is 200 OK\", function() {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://serverest.dev/usuarios/",
+									"protocol": "https",
+									"host": [
+										"serverest",
+										"dev"
+									],
+									"path": [
+										"usuarios",
+										""
+									],
+									"query": [
+										{
+											"key": "_id",
+											"value": "q",
+											"disabled": true
+										},
+										{
+											"key": "nome",
+											"value": "a",
+											"disabled": true
+										},
+										{
+											"key": "email",
+											"value": "@",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "q",
+											"disabled": true
+										},
+										{
+											"key": "administrador",
+											"value": "true",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
